@@ -1,6 +1,8 @@
 -- awesome libs
 local awful = require("awful")
 local beautiful = require("beautiful")
+local mouse = require("mouse")
+local naughty = require("naughty")
 local wibox = require("wibox")
 -- extra libs
 local vicious = require("vicious")
@@ -159,10 +161,39 @@ widget:connect_signal('mouse::enter', function(other, geo)
                         local service_c = wibox.container.margin(
                             service_margin,
                             0, 0, 0, 1, beautiful.fg_normal)
-                        service_c:connect_signal('mouse::enter', function(other, geo)
+                        service_c:connect_signal('mouse::enter', function()
                             service_bg.bg = beautiful.selected
                         end)
-                        service_c:connect_signal('mouse::leave', function(other, geo)
+                        service_c:connect_signal('button::press', function(_, _, _, button)
+                            if button == 1 then
+                                dbus_call(
+                                    'net.connman',
+                                    service_path,
+                                    'net.connman.Service',
+                                    'Connect',
+                                    function(conn, res)
+                                        local ret, err = bus:call_finish(res)
+                                        if ret then
+                                            naughty.notify({text='Connected to ' .. service_props_tbl['Name']})
+                                        else
+                                            local err_msgs = {
+                                                'Already connected',
+                                                'Input/output error'}
+                                            local unknown_err = true
+                                            for _, msg in pairs(err_msgs) do
+                                                if string.match(err.message, msg) then
+                                                    unknown_err = false
+                                                    naughty.notify({text=msg})
+                                                end
+                                            end
+                                            if unknown_err then
+                                                naughty.notify({text=err.message, timeout=0})
+                                            end
+                                        end
+                                    end)
+                            end
+                        end)
+                        service_c:connect_signal('mouse::leave', function()
                             service_bg.bg = nil
                         end)
                         services:add(
