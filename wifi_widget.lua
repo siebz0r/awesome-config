@@ -154,10 +154,19 @@ widget:connect_signal('mouse::enter', function(other, geo)
                             forced_height = 11,
                             layout = wibox.layout.flex.horizontal
                         }
+                        local service_bg = wibox.container.background(service)
+                        local service_margin = wibox.container.margin(service_bg, 1, 1, 1, 1)
+                        local service_c = wibox.container.margin(
+                            service_margin,
+                            0, 0, 0, 1, beautiful.fg_normal)
+                        service_c:connect_signal('mouse::enter', function(other, geo)
+                            service_bg.bg = beautiful.selected
+                        end)
+                        service_c:connect_signal('mouse::leave', function(other, geo)
+                            service_bg.bg = nil
+                        end)
                         services:add(
-                            wibox.container.margin(
-                                wibox.container.margin(service, 1, 1, 1, 1),
-                                0, 0, 0, 1, beautiful.fg_normal))
+                            service_c)
                     else
                         n_services = n_services - 1
                     end

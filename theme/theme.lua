@@ -25,6 +25,7 @@ theme.border_focus  = "#257000"
 theme.border_marked = "#91231c"
 
 theme.shadow = '#78AC00'
+theme.selected = '#000000'
 
 theme.arcchart_bg = '#000000'
 
