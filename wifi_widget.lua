@@ -11,6 +11,51 @@ local Gio = lgi.require("Gio")
 
 graph_text_format = '<span bgcolor="#000000" bgalpha="40%%">%s%%</span>'
 
+
+-- DBus connection
+local bus = Gio.bus_get_sync(Gio.BusType.SYSTEM)
+
+local function dbus_call(service, path, interface, method, callback)
+    bus:call(
+        service, path, interface, method, nil, nil, 0, -1, nil,
+        function(conn, res)
+            local ret, err = bus:call_finish(res)
+            callback(ret, err)
+        end)
+end
+
+
+-- Create a connman api
+local connman = {}
+
+function connman:connect(service_path, callback)
+    dbus_call(
+        'net.connman',
+        service_path,
+        'net.connman.Service',
+        'Connect',
+        callback)
+end
+
+function connman:get_services(callback)
+    dbus_call(
+        'net.connman',
+        '/',
+        'net.connman.Manager',
+        'GetServices',
+        callback)
+end
+
+function connman:scan(callback)
+    dbus_call(
+        'net.connman',
+        '/net/connman/technology/wifi',
+        'net.connman.Technology',
+        'Scan',
+        callback)
+end
+
+
 -- Create wifi widget
 local widget = wibox.widget {
     layout = wibox.layout.fixed.horizontal
@@ -69,19 +114,9 @@ widget:connect_signal('mouse::enter', function(other, geo)
     awful.placement.no_offscreen(w)
     w.visible = true
 
-    local bus = Gio.bus_get_sync(Gio.BusType.SYSTEM)
-    local function dbus_call(service, path, interface, method, callback)
-        bus:call(
-            service, path, interface, method, nil, nil, 0, -1, nil, callback)
-    end
     local function refresh_services()
-        dbus_call(
-            'net.connman',
-            '/',
-            'net.connman.Manager',
-            'GetServices',
-            function(conn, res)
-                local ret, err = bus:call_finish(res)
+        connman:get_services(
+            function(ret, err)
                 services:reset()
 
                 -- services
@@ -166,13 +201,9 @@ widget:connect_signal('mouse::enter', function(other, geo)
                         end)
                         service_c:connect_signal('button::press', function(_, _, _, button)
                             if button == 1 then
-                                dbus_call(
-                                    'net.connman',
+                                connman:connect(
                                     service_path,
-                                    'net.connman.Service',
-                                    'Connect',
-                                    function(conn, res)
-                                        local ret, err = bus:call_finish(res)
+                                    function(ret, err)
                                         if ret then
                                             naughty.notify({text='Connected to ' .. service_props_tbl['Name']})
                                         else
@@ -211,7 +242,7 @@ widget:connect_signal('mouse::enter', function(other, geo)
             end)
         end
         refresh_services()
-        dbus_call('net.connman', '/net/connman/technology/wifi', 'net.connman.Technology', 'Scan', function(conn, ret)
+        connman:scan(function(ret, err)
             refresh_services()
         end)
 end)
