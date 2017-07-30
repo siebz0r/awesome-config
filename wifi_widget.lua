@@ -165,6 +165,8 @@ widget:connect_signal('mouse::enter', function(other, geo)
                 for i, service in ipairs(services) do
                     local service_name_txt = wibox.widget {
                         widget = wibox.widget.textbox,
+                        forced_width = 170,
+                        ellipsize = 'middle',
                         text = service.name
                     }
                     local service_state_img = wibox.widget {
@@ -183,18 +185,28 @@ widget:connect_signal('mouse::enter', function(other, geo)
                         end
                     end
 
+                    local service_icons = wibox.widget {
+                        service_state_img,
+                        service_security_img,
+                        forced_width = 30,
+                        layout = wibox.layout.align.horizontal
+                    }
                     local service_strength_bar = wibox.widget {
+                        forced_width = 100,
                         widget = wibox.widget.progressbar,
                         max_value = 100,
                         value = service.strength
                     }
                     local service_widget = wibox.widget {
                         service_name_txt,
-                        service_state_img,
-                        service_security_img,
-                        service_strength_bar,
+                        nil,
+                        wibox.widget{
+                            service_icons,
+                            service_strength_bar,
+                            layout = wibox.layout.align.horizontal
+                        },
                         forced_height = 11,
-                        layout = wibox.layout.flex.horizontal
+                        layout = wibox.layout.align.horizontal
                     }
                     local service_bg = wibox.container.background(service_widget)
                     local service_margin = wibox.container.margin(service_bg, 1, 1, 1, 1)
