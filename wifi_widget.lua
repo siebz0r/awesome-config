@@ -58,7 +58,7 @@ function connman:get_services(callback)
 
                 for p = 0, service_props:n_children()-1 do
                     local prop = service_props:get_child_value(p)
-                    local prop_key = prop:get_child_value(0):get_string()
+                    local prop_key = string.lower(prop:get_child_value(0):get_string())
                     local prop_value_cont = prop:get_child_value(1)
                     local prop_value = prop_value_cont:get_child_value(0)
                     local prop_type_string = prop_value:get_type_string()
@@ -79,7 +79,7 @@ function connman:get_services(callback)
                         service[prop_key] = values
                     end
                 end
-                if service.Type == 'wifi' then
+                if service.type == 'wifi' then
                     table.insert(services, service)
                 else
                     services.n = services.n - 1
@@ -165,19 +165,19 @@ widget:connect_signal('mouse::enter', function(other, geo)
                 for i, service in ipairs(services) do
                     local service_name_txt = wibox.widget {
                         widget = wibox.widget.textbox,
-                        text = service.Name
+                        text = service.name
                     }
                     local service_state_img = wibox.widget {
                         widget = wibox.widget.imagebox
                     }
-                    if service.State == 'online' then
+                    if service.state == 'online' then
                         service_state_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/globe-26.png')
                     end
 
                     local service_security_img = wibox.widget {
                         widget = wibox.widget.imagebox
                     }
-                    for _, v in pairs(service.Security) do
+                    for _, v in pairs(service.security) do
                         if v == 'psk' then
                             service_security_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/lock-26.png')
                         end
@@ -186,7 +186,7 @@ widget:connect_signal('mouse::enter', function(other, geo)
                     local service_strength_bar = wibox.widget {
                         widget = wibox.widget.progressbar,
                         max_value = 100,
-                        value = service.Strength
+                        value = service.strength
                     }
                     local service_widget = wibox.widget {
                         service_name_txt,
@@ -210,7 +210,7 @@ widget:connect_signal('mouse::enter', function(other, geo)
                                 service.path,
                                 function(ret, err)
                                     if ret then
-                                        naughty.notify({text='Connected to ' .. service.Name})
+                                        naughty.notify({text='Connected to ' .. service.name})
                                     else
                                         local err_msgs = {
                                             'Already connected',
