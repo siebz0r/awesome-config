@@ -43,7 +43,50 @@ function connman:get_services(callback)
         '/',
         'net.connman.Manager',
         'GetServices',
-        callback)
+        function(ret, err)
+            local services = {}
+
+            local services_array = ret:get_child_value(0)
+            local n_services = services_array:n_children()
+            services.n = n_services
+
+            for s = 0, n_services-1 do
+                local service_struct = services_array:get_child_value(s)
+                local service = {}
+                service.path = service_struct:get_child_value(0):get_string()
+                local service_props = service_struct:get_child_value(1)
+
+                for p = 0, service_props:n_children()-1 do
+                    local prop = service_props:get_child_value(p)
+                    local prop_key = prop:get_child_value(0):get_string()
+                    local prop_value_cont = prop:get_child_value(1)
+                    local prop_value = prop_value_cont:get_child_value(0)
+                    local prop_type_string = prop_value:get_type_string()
+                    if prop_type_string == 's' then
+                        service[prop_key] = prop_value:get_string()
+                    elseif prop_type_string == 'y' then
+                        service[prop_key] = prop_value:get_byte()
+                    elseif prop_type_string == 'as' then
+                        local values = {}
+                        local nc = prop_value:n_children()
+                        if nc > 0 then
+                            for i = 0, nc -1 do
+                                local v = prop_value:get_child_value(i)
+                                local value = v:get_string()
+                                table.insert(values, value)
+                            end
+                        end
+                        service[prop_key] = values
+                    end
+                end
+                if service.Type == 'wifi' then
+                    table.insert(services, service)
+                else
+                    services.n = services.n - 1
+                end
+            end
+            callback(services)
+        end)
 end
 
 function connman:scan(callback)
@@ -94,14 +137,14 @@ wifi_bar_c = wibox.widget {
 widget:add(wifi_bar_c)
 
 widget:connect_signal('mouse::enter', function(other, geo)
-    local services = wibox.widget {
+    local services_widget = wibox.widget {
         layout = wibox.layout.fixed.vertical
     }
 
     local w = wibox {
         width = 300,
         ontop = true,
-        widget = wibox.container.margin(services, 1, 1, 1, 0, beautiful.fg_normal)
+        widget = wibox.container.margin(services_widget, 1, 1, 1, 0, beautiful.fg_normal)
     }
     local function close()
         if mouse.current_wibox ~= w then
@@ -116,124 +159,84 @@ widget:connect_signal('mouse::enter', function(other, geo)
 
     local function refresh_services()
         connman:get_services(
-            function(ret, err)
-                services:reset()
+            function(services)
+                services_widget:reset()
 
-                -- services
-                local services_array = ret:get_child_value(0)
-                local n_services = services_array:n_children()
+                for i, service in ipairs(services) do
+                    local service_name_txt = wibox.widget {
+                        widget = wibox.widget.textbox,
+                        text = service.Name
+                    }
+                    local service_state_img = wibox.widget {
+                        widget = wibox.widget.imagebox
+                    }
+                    if service.State == 'online' then
+                        service_state_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/globe-26.png')
+                    end
 
-                for s = 0, n_services-1 do
-                    -- service
-                    local service_struct = services_array:get_child_value(s)
-                    -- service path
-                    local service_path = service_struct:get_child_value(0):get_string()
-
-                    -- service properties
-                    local service_props = service_struct:get_child_value(1)
-                    local service_props_tbl = {}
-                    -- loop through service properties for name
-                    for p = 0, service_props:n_children()-1 do
-                        local prop = service_props:get_child_value(p)
-                        local prop_key = prop:get_child_value(0):get_string()
-                        local prop_value_cont = prop:get_child_value(1)
-                        local prop_value = prop_value_cont:get_child_value(0)
-                        local prop_type_string = prop_value:get_type_string()
-                        if prop_type_string == 's' then
-                            service_props_tbl[prop_key] = prop_value:get_string()
-                        elseif prop_type_string == 'y' then
-                            service_props_tbl[prop_key] = prop_value:get_byte()
-                        elseif prop_type_string == 'as' then
-                            local values = {}
-                            local nc = prop_value:n_children()
-                            if nc > 0 then
-                                for i = 0, nc -1 do
-                                    local v = prop_value:get_child_value(i)
-                                    local value = v:get_string()
-                                    table.insert(values, value)
-                                end
-                            end
-                            service_props_tbl[prop_key] = values
+                    local service_security_img = wibox.widget {
+                        widget = wibox.widget.imagebox
+                    }
+                    for _, v in pairs(service.Security) do
+                        if v == 'psk' then
+                            service_security_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/lock-26.png')
                         end
                     end
 
-                    if service_props_tbl['Type'] == 'wifi' then
-                        local service_name_txt = wibox.widget {
-                            widget = wibox.widget.textbox,
-                            text = service_props_tbl['Name']
-                        }
-                        local service_state_img = wibox.widget {
-                            widget = wibox.widget.imagebox
-                        }
-                        if service_props_tbl['State'] == 'online' then
-                            service_state_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/globe-26.png')
-                        end
-
-                        local service_security_img = wibox.widget {
-                            widget = wibox.widget.imagebox
-                        }
-                        for _, v in pairs(service_props_tbl['Security']) do
-                            if v == 'psk' then
-                                service_security_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/lock-26.png')
-                            end
-                        end
-
-                        local service_strength_bar = wibox.widget {
-                            widget = wibox.widget.progressbar,
-                            max_value = 100,
-                            value = service_props_tbl['Strength']
-                        }
-                        local service = wibox.widget {
-                            service_name_txt,
-                            service_state_img,
-                            service_security_img,
-                            service_strength_bar,
-                            forced_height = 11,
-                            layout = wibox.layout.flex.horizontal
-                        }
-                        local service_bg = wibox.container.background(service)
-                        local service_margin = wibox.container.margin(service_bg, 1, 1, 1, 1)
-                        local service_c = wibox.container.margin(
-                            service_margin,
-                            0, 0, 0, 1, beautiful.fg_normal)
-                        service_c:connect_signal('mouse::enter', function()
-                            service_bg.bg = beautiful.selected
-                        end)
-                        service_c:connect_signal('button::press', function(_, _, _, button)
-                            if button == 1 then
-                                connman:connect(
-                                    service_path,
-                                    function(ret, err)
-                                        if ret then
-                                            naughty.notify({text='Connected to ' .. service_props_tbl['Name']})
-                                        else
-                                            local err_msgs = {
-                                                'Already connected',
-                                                'Input/output error'}
-                                            local unknown_err = true
-                                            for _, msg in pairs(err_msgs) do
-                                                if string.match(err.message, msg) then
-                                                    unknown_err = false
-                                                    naughty.notify({text=msg})
-                                                end
-                                            end
-                                            if unknown_err then
-                                                naughty.notify({text=err.message, timeout=0})
+                    local service_strength_bar = wibox.widget {
+                        widget = wibox.widget.progressbar,
+                        max_value = 100,
+                        value = service.Strength
+                    }
+                    local service_widget = wibox.widget {
+                        service_name_txt,
+                        service_state_img,
+                        service_security_img,
+                        service_strength_bar,
+                        forced_height = 11,
+                        layout = wibox.layout.flex.horizontal
+                    }
+                    local service_bg = wibox.container.background(service_widget)
+                    local service_margin = wibox.container.margin(service_bg, 1, 1, 1, 1)
+                    local service_c = wibox.container.margin(
+                        service_margin,
+                        0, 0, 0, 1, beautiful.fg_normal)
+                    service_c:connect_signal('mouse::enter', function()
+                        service_bg.bg = beautiful.selected
+                    end)
+                    service_c:connect_signal('button::press', function(_, _, _, button)
+                        if button == 1 then
+                            connman:connect(
+                                service.path,
+                                function(ret, err)
+                                    if ret then
+                                        naughty.notify({text='Connected to ' .. service.Name})
+                                    else
+                                        local err_msgs = {
+                                            'Already connected',
+                                            'Input/output error'}
+                                        local unknown_err = true
+                                        for _, msg in pairs(err_msgs) do
+                                            if string.match(err.message, msg) then
+                                                unknown_err = false
+                                                naughty.notify({text=msg})
                                             end
                                         end
-                                    end)
-                            end
-                        end)
-                        service_c:connect_signal('mouse::leave', function()
-                            service_bg.bg = nil
-                        end)
-                        services:add(
-                            service_c)
-                    else
-                        n_services = n_services - 1
-                    end
+                                        if unknown_err then
+                                            naughty.notify({text=err.message, timeout=0})
+                                        end
+                                    end
+                                end)
+                        end
+                    end)
+                    service_c:connect_signal('mouse::leave', function()
+                        service_bg.bg = nil
+                    end)
+                    services_widget:add(
+                        service_c)
                 end
-                w.height = 14 * n_services + 1
+
+                w.height = 14 * services.n + 1
                 awful.placement.next_to(w, {
                     geometry = geo,
                     honor_workarea = true,
