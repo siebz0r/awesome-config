@@ -173,9 +173,9 @@ widget:connect_signal('mouse::enter', function(other, geo)
                         widget = wibox.widget.imagebox
                     }
                     if service.state == 'online' then
-                        service_state_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/globe-26.png')
+                        service_state_img:set_image(beautiful:icon('globe'))
                     elseif service.state == 'configuration' then
-                        service_state_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/settings-26.png')
+                        service_state_img:set_image(beautiful:icon('settings'))
                     end
 
                     local service_security_img = wibox.widget {
@@ -183,7 +183,7 @@ widget:connect_signal('mouse::enter', function(other, geo)
                     }
                     for _, v in pairs(service.security) do
                         if v == 'psk' then
-                            service_security_img:set_image(os.getenv('HOME') .. '/.config/awesome/theme/icons/lock-26.png')
+                            service_security_img:set_image(beautiful:icon('lock'))
                         end
                     end
 

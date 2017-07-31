@@ -206,8 +206,7 @@ cpu_widget = wibox.layout.fixed.horizontal()
 cpu_icon = wibox.widget.imagebox()
 cpu_icon:set_resize(true)
 cpu_widget:add(cpu_icon)
-cpu_icon:set_image(
-    os.getenv("HOME") .. "/.config/awesome/theme/icons/electronics-26.png")
+cpu_icon:set_image(beautiful:icon('electronics'))
 cpu_graph = wibox.widget {
     widget = wibox.widget.graph,
     width = 40,
@@ -320,8 +319,7 @@ end)
 -- Create a Memory widget
 mem_widget = wibox.layout.fixed.horizontal()
 mem_icon = wibox.widget.imagebox()
-mem_icon:set_image(
-    os.getenv("HOME") .. "/.config/awesome/theme/icons/memmory_slot-26.png")
+mem_icon:set_image(beautiful:icon('memmory_slot'))
 mem_icon:set_resize(true)
 mem_widget:add(mem_icon)
 
@@ -412,8 +410,7 @@ end
 -- Create a volume widget
 volume_widget = wibox.layout.fixed.horizontal()
 volume_icon = wibox.widget.imagebox()
-volume_icon:set_image(
-    os.getenv('HOME') .. '/.config/awesome/theme/icons/loudspeaker-26.png')
+volume_icon:set_image(beautiful:icon('loudspeaker'))
 volume_icon:set_resize(true)
 volume_widget:add(volume_icon)
 
@@ -462,8 +459,7 @@ awful.spawn.with_shell('killall pulseaudio-dbus; pulseaudio-dbus')
 -- Create a root fs widget
 sda_widget = wibox.layout.fixed.horizontal()
 sda_icon = wibox.widget.imagebox()
-sda_icon:set_image(
-    os.getenv("HOME") .. "/.config/awesome/theme/icons/hdd-26.png")
+sda_icon:set_image(beautiful:icon('hdd'))
 sda_icon:set_resize(true)
 sda_widget:add(sda_icon)
 
@@ -488,8 +484,7 @@ sda_widget:add(sda_pbar_layout)
 -- Create a root fs widget
 sdb_widget = wibox.layout.fixed.horizontal()
 sdb_icon = wibox.widget.imagebox()
-sdb_icon:set_image(
-    os.getenv("HOME") .. "/.config/awesome/theme/icons/hdd-26.png")
+sdb_icon:set_image(beautiful:icon('hdd'))
 sdb_icon:set_resize(true)
 sdb_widget:add(sdb_icon)
 

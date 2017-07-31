@@ -47,6 +47,10 @@ theme.slider_handle_color = theme.fg_normal
 local theme_dir = os.getenv("HOME") .. '/.config/awesome/theme/'
 local icon_dir = theme_dir .. 'icons/'
 
+function theme:icon(name)
+    return icon_dir .. name .. '-26.png'
+end
+
 -- There are other variable sets
 -- overriding the default one when
 -- defined, the sets are:
@@ -77,10 +81,10 @@ theme.menu_width  = 100
 theme.wallpaper = theme_dir .. "/background.png"
 
 theme.awesome_icon = "/usr/share/awesome/icons/awesome16.png"
-theme.reboot_icon = icon_dir .. 'restart-26.png'
-theme.shutdown_icon = icon_dir .. 'shutdown-26.png'
-theme.suspend_icon = icon_dir .. 'sleep-26.png'
-theme.terminal_icon = icon_dir .. 'console-26.png'
+theme.reboot_icon = theme:icon('restart')
+theme.shutdown_icon = theme:icon('shutdown')
+theme.suspend_icon = theme:icon('sleep')
+theme.terminal_icon = theme:icon('console')
 
 -- Define the icon theme for application icons. If not set then the icons
 -- from /usr/share/icons and /usr/share/icons/hicolor will be used.
