@@ -197,12 +197,22 @@ widget:connect_signal('mouse::enter', function(other, geo)
                         max_value = 100,
                         value = service.strength
                     }
+                    local service_strength_txt = wibox.widget {
+                        align = 'center',
+                        widget = wibox.widget.textbox,
+                        markup = string.format(graph_text_format, service.strength)
+                    }
+                    local service_strength_widget = wibox.widget {
+                        service_strength_bar,
+                        service_strength_txt,
+                        layout = wibox.layout.stack
+                    }
                     local service_widget = wibox.widget {
                         service_name_txt,
                         nil,
                         wibox.widget{
                             service_icons,
-                            service_strength_bar,
+                            service_strength_widget,
                             layout = wibox.layout.align.horizontal
                         },
                         forced_height = 11,
