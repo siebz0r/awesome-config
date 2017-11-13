@@ -76,6 +76,16 @@ theme.tasklist_bg_urgent = wibar_gradient({
 
 theme.wibar_height = 20
 
+theme.vol_widget_bg = gears.color.create_pattern({
+    type='linear',
+    from={0, 0},
+    to={0, 12},
+    stops={
+        {0, '#363636'},
+        {1, theme.bg_normal}
+    }
+})
+
 local theme_dir = os.getenv("HOME") .. '/.config/awesome/theme/'
 local icon_dir = theme_dir .. 'icons/'
 

@@ -381,6 +381,7 @@ vol_slider_comp = wibox.widget {
 }
 vol_wibox_height = 40
 vol_wibox = wibox {
+    bg=theme.vol_widget_bg,
     width = vol_wibox_width,
     height = vol_wibox_height,
     ontop = true,
