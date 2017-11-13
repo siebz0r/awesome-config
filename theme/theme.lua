@@ -57,6 +57,22 @@ theme.wibar_bg = wibar_gradient({
         {0.5, theme.bg_normal},
         {1, '#0d0d0d'} -- 8% darker
     })
+theme.tasklist_bg_normal = theme.wibar_bg
+theme.tasklist_bg_focus = wibar_gradient({
+    {0, '#677180'}, -- lightened by 8%
+    {0.5, theme.bg_focus},
+    {1, '#3E4857'} -- 8% darker
+})
+theme.tasklist_bg_minimize = wibar_gradient({
+    {0, '#585858'}, -- lightened by 8%
+    {0.5, theme.bg_minimize},
+    {1, '#2f2f2f'} -- 8% darker
+})
+theme.tasklist_bg_urgent = wibar_gradient({
+    {0, '#ff2929'}, -- lightened by 16%
+    {0.5, theme.bg_urgent},
+    {1, '#d60000'} -- 16% darker
+})
 
 local theme_dir = os.getenv("HOME") .. '/.config/awesome/theme/'
 local icon_dir = theme_dir .. 'icons/'
