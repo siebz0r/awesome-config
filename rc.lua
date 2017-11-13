@@ -1133,6 +1133,10 @@ function init_screen(s)
     set_wallpaper(s)
 end
 
+screen.connect_signal('added', function(s)
+    init_screen(s)
+end)
+
 for s in screen do
     init_screen(s)
 end
