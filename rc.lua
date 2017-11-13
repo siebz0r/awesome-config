@@ -798,7 +798,7 @@ clientkeys = awful.util.table.join(
             local height = screengeo.height - 1 - beautiful.border_width * 2
             c.maximized_horizontal = false
             c.maximized_vertical = true
-            c:geometry({ x = screengeo.width - width, y = screengeo.y,
+            c:geometry({ x = screengeo.x + width, y = screengeo.y,
                          width = width, height = height })
         end),
     awful.key({ "Mod4", "Control" }, "Left",
@@ -831,7 +831,7 @@ clientkeys = awful.util.table.join(
             local height = screengeo.height / 2
             c.maximized_horizontal = false
             c.maximized_vertical = false
-            c:geometry({ x = screengeo.width / 2, y = screengeo.y,
+            c:geometry({ x = screengeo.x + width, y = screengeo.y,
                          width = width, height = height })
         end),
     awful.key({ "Mod4", "Control" }, "Down",
@@ -842,7 +842,7 @@ clientkeys = awful.util.table.join(
             local height = screengeo.height / 2 - beautiful.border_width
             c.maximized_horizontal = false
             c.maximized_vertical = false
-            c:geometry({ x = screengeo.width / 2, y = screengeo.height / 2,
+            c:geometry({ x = screengeo.x + width, y = screengeo.height / 2,
                          width = width, height = height })
         end),
     awful.key({ "Mod4",           }, "c",
@@ -865,7 +865,7 @@ clientkeys = awful.util.table.join(
             local x_offset = x_offset / 2
             local y_offset = screengeo.height - geometry.height - beautiful.border_width
             local y_offset = y_offset / 2
-            c:geometry({ x = x_offset, y = y_offset })
+            c:geometry({ x = screengeo.x + x_offset, y = y_offset })
         end),
     cyclefocus.key({ "Mod1",           }, "Tab", 1,
         { cycle_filters = { cyclefocus.filters.same_screen,
