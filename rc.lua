@@ -388,7 +388,7 @@ vol_wibox = wibox {
     x = mouse.screen.geometry.width/2 - vol_wibox_width/2,
     y = mouse.screen.geometry.height*0.75 - vol_wibox_height/2,
     shape = gears.shape.rounded_bar,
-    opacity = 0.75,
+    opacity = 0.9,
     widget = vol_slider_comp
 }
 vol_wibox_timer = gears.timer({
