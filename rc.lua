@@ -1060,7 +1060,6 @@ client.connect_signal("manage", function (c, startup)
 
         awful.titlebar(c):set_widget(layout)
     end
---    naughty.notify({title=c.class})
 end)
 
 client.connect_signal('property::class', function(c)
