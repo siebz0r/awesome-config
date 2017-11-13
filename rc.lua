@@ -754,24 +754,28 @@ clientkeys = awful.util.table.join(
             c.minimized = true
         end),
     awful.key({ "Mod1", "Control", "Shift" }, "Left",
-        function ()
-            local current = awful.tag.getidx()
-            if current == 1 then dest = 8
-            else dest = current - 1
+        function (c)
+            if client.focus then
+                local current = awful.tag.getidx()
+                if current == 1 then dest = 8
+                else dest = current - 1
+                end
+                local tag = tags[client.focus.screen.index][dest]
+                awful.client.movetotag(tag)
+                awful.tag.viewonly(tag)
             end
-            tag = tags[client.focus.screen.index][dest]
-            awful.client.movetotag(tag)
-            awful.tag.viewonly(tag)
         end),
     awful.key({ "Mod1", "Control", "Shift" }, "Right",
         function ()
-            local current = awful.tag.getidx()
-            if current == 8 then dest = 1
-            else dest = current + 1
+            if client.focus then
+                local current = awful.tag.getidx()
+                if current == 8 then dest = 1
+                else dest = current + 1
+                end
+                local tag = tags[client.focus.screen.index][dest]
+                awful.client.movetotag(tag)
+                awful.tag.viewonly(tag)
             end
-            tag = tags[client.focus.screen.index][dest]
-            awful.client.movetotag(tag)
-            awful.tag.viewonly(tag)
         end),
     awful.key({ "Mod4",           }, "Left",
         function (c)
