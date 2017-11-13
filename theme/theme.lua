@@ -74,6 +74,8 @@ theme.tasklist_bg_urgent = wibar_gradient({
     {1, '#d60000'} -- 16% darker
 })
 
+theme.wibar_height = 20
+
 local theme_dir = os.getenv("HOME") .. '/.config/awesome/theme/'
 local icon_dir = theme_dir .. 'icons/'
 
