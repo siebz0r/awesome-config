@@ -672,7 +672,7 @@ globalkeys = awful.util.table.join(
     -- Prompt
     awful.key({ modkey            }, "r",
         function ()
-            mypromptbox[mouse.screen]:run()
+            mypromptbox[mouse.screen.index]:run()
         end),
     -- Menubar
     awful.key({ modkey }, "p", function() menubar.show() end),
