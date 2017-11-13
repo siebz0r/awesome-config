@@ -86,12 +86,15 @@ end
 -- Define a tag table which hold all screen tags.
 tags = {}
 previous_tag = nil
-for s = 1, screen.count() do
+function init_tags(s)
     -- Each screen has its own tag table.
-    tags[s] = {}
+    tags[s.index] = {}
     for i = 1, 8 do
-        tag = awful.tag.add(i, {screen=s, layout=awful.layout.suit.floating})
-        table.insert(tags[s], tag)
+        local tag = awful.tag.add(i, {screen=s, layout=awful.layout.suit.floating})
+        table.insert(tags[s.index], tag)
+        if i == 1 then
+            tag.selected = true
+        end
         tag:connect_signal('property::selected', function(tag)
             if not tag.selected then
                 previous_tag = tag
@@ -99,7 +102,6 @@ for s = 1, screen.count() do
         end)
     end
 end
-awful.tag.viewonly(tags[1][1])
 -- }}}
 
 -- {{{ Menu
@@ -1119,9 +1121,11 @@ awful.spawn.with_shell(
 -- }}}
 
 function init_screen(s)
+    init_tags(s)
     set_wallpaper(s)
 end
 
 for s in screen do
     init_screen(s)
 end
+awful.tag.viewonly(tags[1][1])
