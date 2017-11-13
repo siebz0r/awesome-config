@@ -986,10 +986,7 @@ awful.rules.rules = {
     { rule = { class = "xterm" },
       properties = { size_hints_honor = false } },
     { rule = { class = "Lilyterm" },
-      properties = { size_hints_honor = false } },
-    -- Start Clementine on tag 4, don't make it active.
-    { rule = { class = "Clementine" },
-      properties = { tag = tags[1][4], switchtotag=false, focus=false } }
+      properties = { size_hints_honor = false } }
 }
 -- }}}
 
