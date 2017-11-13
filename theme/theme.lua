@@ -44,6 +44,20 @@ theme.slider_bar_color = theme.shadow
 theme.slider_handle_shape = gears.shape.circle
 theme.slider_handle_color = theme.fg_normal
 
+local function wibar_gradient(stops)
+    return gears.color.create_pattern({
+        type='linear',
+        from={0, 0},
+        to={0, 22},
+        stops=stops
+    })
+end
+theme.wibar_bg = wibar_gradient({
+        {0, '#363636'}, -- lightened by 8%
+        {0.5, theme.bg_normal},
+        {1, '#0d0d0d'} -- 8% darker
+    })
+
 local theme_dir = os.getenv("HOME") .. '/.config/awesome/theme/'
 local icon_dir = theme_dir .. 'icons/'
 
