@@ -1,6 +1,7 @@
 -- Standard awesome library
 local gears = require("gears")
 local mouse = require('mouse')
+local screen = require('screen')
 local awful = require("awful")
 awful.rules = require("awful.rules")
 require("awful.autofocus")
@@ -74,9 +75,9 @@ editor_cmd = terminal .. " -e " .. editor
 modkey = "Mod4"
 
 -- {{{ Wallpaper
-if beautiful.wallpaper then
-    for s = 1, screen.count() do
-        gears.wallpaper.maximized(beautiful.wallpaper, s, true)
+function set_wallpaper(sc)
+    if beautiful.wallpaper then
+        gears.wallpaper.maximized(beautiful.wallpaper, sc, true)
     end
 end
 -- }}}
@@ -1116,3 +1117,11 @@ awful.spawn.with_shell(
 --    ' -z -m 0.9' ..
     ' --backend glx')
 -- }}}
+
+function init_screen(s)
+    set_wallpaper(s)
+end
+
+for s in screen do
+    init_screen(s)
+end
