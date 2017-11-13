@@ -558,27 +558,30 @@ mytasklist.buttons = awful.util.table.join(
                                           end))
 
 
-for s = 1, screen.count() do
+function init_wibox(s)
     -- Create a promptbox for each screen
     run_icon = wibox.widget.imagebox()
-    mypromptbox[s] = awful.widget.prompt({ prompt = "Run :" })
+    mypromptbox[s.index] = awful.widget.prompt({ prompt = "Run :" })
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
+    mytaglist[s.index] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
+    mytasklist[s.index] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
-    mywibox[s] = awful.wibox({ position = "bottom", ontop = true, screen = s })
+    mywibox[s.index] = awful.wibar({
+        position="bottom",
+        ontop=true,
+        screen=s})
 
     -- Widgets that are aligned to the left
     local left_layout = wibox.layout.fixed.horizontal()
-    left_layout:add(mytaglist[s])
-    left_layout:add(mypromptbox[s])
+    left_layout:add(mytaglist[s.index])
+    left_layout:add(mypromptbox[s.index])
 
     -- Widgets that are aligned to the right
     local right_layout = wibox.layout.fixed.horizontal()
-    if s == 1 then
+    if s.index == 1 then
         right_layout:add(separator)
         right_layout:add(wibox.widget.systray())
     end
@@ -604,10 +607,10 @@ for s = 1, screen.count() do
     -- Now bring it all together (with the tasklist in the middle)
     local layout = wibox.layout.align.horizontal()
     layout:set_left(left_layout)
-    layout:set_middle(mytasklist[s])
+    layout:set_middle(mytasklist[s.index])
     layout:set_right(right_layout)
 
-    mywibox[s]:set_widget(layout)
+    mywibox[s.index]:set_widget(layout)
 end
 -- }}}
 
@@ -1122,6 +1125,7 @@ awful.spawn.with_shell(
 
 function init_screen(s)
     init_tags(s)
+    init_wibox(s)
     set_wallpaper(s)
 end
 
