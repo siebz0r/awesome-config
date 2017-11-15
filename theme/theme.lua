@@ -32,6 +32,8 @@ theme.arcchart_bg = '#000000'
 theme.graph_fg = theme.fg_normal
 theme.graph_border_color = '#ffffff'
 
+theme.notification_opacity = 0.75
+
 theme.progressbar_border_color = theme.fg_normal
 theme.progressbar_bar_border_color = theme.border_normal
 theme.progressbar_fg = theme.fg_normal
