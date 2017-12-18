@@ -868,6 +868,26 @@ clientkeys = awful.util.table.join(
             local y_offset = y_offset / 2
             c:geometry({ x = screengeo.x + x_offset, y = y_offset })
         end),
+    awful.key({"Mod4", "Shift"}, "Up",
+        function (c)
+            -- Shrink the client upwards
+            awful.client.moveresize(0, 0, 0, -1)
+        end),
+    awful.key({"Mod4", "Shift"}, "Down",
+        function (c)
+            -- Enlarge the client downwards
+            awful.client.moveresize(0, 0, 0, 1)
+        end),
+    awful.key({"Mod4", "Shift"}, "Left",
+        function (c)
+            -- Shrink the client leftwards
+            awful.client.moveresize(0, 0, -1, 0)
+        end),
+    awful.key({"Mod4", "Shift"}, "Right",
+        function (c)
+            -- Enlarge the client rightwards
+            awful.client.moveresize(0, 0, 1, 0)
+        end),
     cyclefocus.key({ "Mod1",           }, "Tab", 1,
         { cycle_filters = { cyclefocus.filters.same_screen,
                             cyclefocus.filters.common_tag } }),
